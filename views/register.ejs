@@ -1,0 +1,28 @@
+<%- include("components/header.ejs") -%>
+<div class="container text-center p-5">
+<p class="text-center">
+    <h1>Register Page</h1>
+
+    <% if(message){ %>
+        <% message %>
+    <% } %>
+
+</p>
+<form action="/auth/register" method="post">
+    <div class="form-group">
+      <label for="email">UserName</label>
+      <input type="text" class="form-control" placeholder="Enter email" name="username">
+    </div>	
+    <div class="form-group">
+      <label for="email">Email address:</label>
+      <input type="email" class="form-control" placeholder="Enter email" name="email">
+    </div>
+    <div class="form-group">
+      <label for="pwd">Password:</label>
+      <input type="password" class="form-control" placeholder="Enter password" name="password">
+    </div>
+  
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+</div>
+  <%- include("components/footer.ejs") -%>

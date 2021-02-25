@@ -1,7 +1,7 @@
 const mongoose=require("mongoose")
 const bcrypt=require("bcryptjs")
 const { BIconReceipt } = require("bootstrap-vue")
-const Salt_round=10
+const SALT_WORK_FACTOR=10
 
 const Schema=mongoose.Schema
 
@@ -22,35 +22,31 @@ const UserSchema=new Schema({
     timestamps:true
 })
 
-UserSchema.pre("save",preSave=(next)=>{
-    const user=this
+UserSchema.pre('save', function preSave(next) {
+    const user = this;
+  
+    // only hash the password if it has been modified (or is new)
+    if (!user.isModified('password')) return next();
+  
+    // generate a salt
+    return bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
+      if (err) return next(err);
+      // hash the password using our new salt
+      return bcrypt.hash(user.password, salt, (hasherr, hash) => {
+        if (hasherr) return next(hasherr);
+        // override the cleartext password with the hashed one
+        user.password = hash;
+        return next();
+      });
+    });
+  });
+  
+  UserSchema.methods.comparePassword=async function comparePassword(reqPass){
 
-    if(!user.password.isModified()) return next()
-
-    return bcrypt.getSalt(Salt_round,(err, hashSalt)=>{
-         
-        if(err) next(err)
-          bcrypt.hash(user.password,hashSalt,(err, hash)=>{
-            if(err) next(err)
-            user.password=hash 
-             next()
-
-          } )
-
-    })
-
-
-
-})
-
-UserSchema.methods.comparePassword=function comparePassword(reqPass,cb){
-       bcrypt.compare(reqPass,this.password,(err, match)=>{
-           if(err) return cb(err)
-           return cb(null,match)
-       })
+    return await bcrypt.compare(reqPass, this.password)
 
 }
-
+  
 
 
 
