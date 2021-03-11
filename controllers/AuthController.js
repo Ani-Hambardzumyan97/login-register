@@ -48,7 +48,7 @@ console.log(user)
             return res.render("login",{message:`Email or password is incorrect`})
           }
            req.session.user=user
-           res.redirect("/todo")
+           res.redirect("/welcome")
 
          }catch(err){
              console.log(err)
